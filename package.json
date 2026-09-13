@@ -1,0 +1,24 @@
+{
+  "name": "drive-mcp",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Minimal Google Drive MCP server for a single Google account: search, read, download, create, update, move, trash and share over stdio",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/reisbel/drive-mcp.git"
+  },
+  "keywords": ["mcp", "model-context-protocol", "google-drive", "claude-code"],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "auth": "node auth.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "googleapis": "^180.0.0"
+  }
+}
