@@ -128,7 +128,10 @@ An existing token keeps its old scope, and API calls fail with `insufficient aut
 ## Notes
 
 - Staying in OAuth "Testing" status is fine for personal use; no Google verification is needed.
-  Refresh tokens for unverified apps expire after 7 days of disuse, so re-run `npm run auth` if calls start failing with `invalid_grant`.
+  Refresh tokens for an app in **Testing** status expire **7 days after they are
+  issued**, whether or not the app is used. This is not an idle timeout: a token
+  used every single day still stops working on day 7.
+  Re-run `npm run auth` when calls start failing with `invalid_grant`.
 - `credentials.json` and `token.json` are secrets.
   They are gitignored here, but treat any copy of them like a password.
 - Sibling projects: [gmail-mcp](https://github.com/reisbel/gmail-mcp) and [calendar-mcp](https://github.com/reisbel/calendar-mcp).
