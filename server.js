@@ -693,13 +693,40 @@ const server = new Server({ name: 'drive-mcp', version: '1.0.0' }, { capabilitie
 
 server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: TOOLS }));
 
+// Reject arguments the tool does not declare, instead of silently dropping them.
+// Without this, a call using the wrong spelling for a parameter (snake_case for a
+// camelCase name, say) succeeds against the defaults and returns plausible data for
+// something the caller never asked for. Silent wrong data is worse than an error.
+function validateArgs(tool, args) {
+  const allowed = Object.keys(tool.inputSchema?.properties ?? {});
+  const canon = (k) => k.toLowerCase().replace(/[_-]/g, '');
+  const unknown = Object.keys(args).filter((k) => !allowed.includes(k));
+  if (unknown.length) {
+    const detail = unknown.map((k) => {
+      const hit = allowed.find((a) => canon(a) === canon(k));
+      return hit ? `${k} (did you mean ${hit}?)` : k;
+    });
+    throw new Error(
+      `Unknown parameter${unknown.length > 1 ? 's' : ''}: ${detail.join(', ')}. ` +
+      `${tool.name} accepts: ${allowed.join(', ') || '(none)'}.`
+    );
+  }
+  const missing = (tool.inputSchema?.required ?? []).filter((k) => args[k] === undefined);
+  if (missing.length) {
+    throw new Error(`Missing required parameter${missing.length > 1 ? 's' : ''}: ${missing.join(', ')}.`);
+  }
+}
+
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const handler = HANDLERS[request.params.name];
-  if (!handler) {
+  const tool = TOOLS.find((t) => t.name === request.params.name);
+  if (!handler || !tool) {
     return { content: [{ type: 'text', text: `Unknown tool: ${request.params.name}` }], isError: true };
   }
   try {
-    const result = await handler(request.params.arguments ?? {});
+    const args = request.params.arguments ?? {};
+    validateArgs(tool, args);
+    const result = await handler(args);
     return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
   } catch (e) {
     const detail = e.response?.data?.error?.message ?? e.errors?.[0]?.message;
