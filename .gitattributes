@@ -1,0 +1,3 @@
+# Tests are for the repo, not for the exported server.
+validate.test.js export-ignore
+.gitattributes export-ignore

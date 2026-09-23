@@ -15,7 +15,8 @@
   },
   "scripts": {
     "auth": "node auth.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "node --test"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.0",

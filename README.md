@@ -81,6 +81,8 @@ The tool name prefix is `mcp__<server name>__`, so adjust it to whatever name yo
 | File | Purpose |
 | --- | --- |
 | `server.js` | The MCP server |
+| `validate.js` | Rejects undeclared or missing tool arguments |
+| `validate.test.js` | Unit tests for the validator, run with `npm test` |
 | `auth.js` | One-time OAuth consent flow; writes the token file |
 | `config.js` | File locations and scope, overridable through environment variables |
 | `credentials.json` | OAuth client from Google Cloud Console. Gitignored, never commit it |
